@@ -97,7 +97,7 @@ class BasicSceneCollector(HookBaseClass):
                     "item_type": "file.hiero",
                 },
                 "Houdini Scene": {
-                    "extensions": ["hip", "hipnc"],
+                    "extensions": ["hip", "hipnc", "hiplc"],
                     "icon": self._get_icon_path("houdini.png"),
                     "item_type": "file.houdini",
                 },

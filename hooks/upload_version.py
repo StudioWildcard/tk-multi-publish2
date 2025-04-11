@@ -109,7 +109,7 @@ class UploadVersionPlugin(HookBaseClass):
                     ["Alembic Cache", "abc"],
                     ["3dsmax Scene", "max"],
                     ["NukeStudio Project", "hrox"],
-                    ["Houdini Scene", "hip", "hipnc"],
+                    ["Houdini Scene", "hip", "hipnc", "hiplc"],
                     ["Maya Scene", "ma", "mb"],
                     ["Motion Builder FBX", "fbx"],
                     ["Nuke Script", "nk"],
