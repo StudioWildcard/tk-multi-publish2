@@ -42,7 +42,7 @@ class PublishTreeWidget(QtGui.QTreeWidget):
         """
         :param parent: The parent QWidget for this control
         """
-        super(PublishTreeWidget, self).__init__(parent)
+        super().__init__(parent)
         self._publish_manager = None
         self._selected_items_state = []
         self._bundle = sgtk.platform.current_bundle()
@@ -69,17 +69,6 @@ class PublishTreeWidget(QtGui.QTreeWidget):
         self.itemExpanded.connect(self.on_item_expand_state_change)
         self.itemCollapsed.connect(self.on_item_expand_state_change)
 
-        # workaround to make the scrollbar work properly for QT versions < 5 on macOS
-        # This look like a bug tracked on the QT side
-        # ( https://bugreports.qt.io/browse/QTBUG-27043 )
-        # ( https://stackoverflow.com/questions/15331256/qlistwidget-with-custom-widget-does-not-scroll-properly-in-mac-os )
-        if QtCore.__version__.startswith("4.") and sgtk.util.is_macos():
-            self.verticalScrollBar().actionTriggered.connect(
-                self.updateEditorGeometries
-            )
-            self.verticalScrollBar().sliderMoved.connect(self.updateEditorGeometries)
-            self.verticalScrollBar().rangeChanged.connect(self.updateEditorGeometries)
-
     def on_item_expand_state_change(self, item):
         # Since the item can be expanded/collapsed via the custom expand button
         # but also via the invisible native expand button (which can still be clicked),
@@ -98,7 +87,7 @@ class PublishTreeWidget(QtGui.QTreeWidget):
          to paint in the remainder of the selection box covering the branch area.
         """
         # First draw the default visuals for the branch.
-        super(PublishTreeWidget, self).drawBranches(painter, rect, index)
+        super().drawBranches(painter, rect, index)
 
         if index in self.selectedIndexes():
             # Draw the selection boarder around the shifted item.
@@ -152,12 +141,12 @@ class PublishTreeWidget(QtGui.QTreeWidget):
             ui_task = TreeNodeTask(task, ui_item)
             self.__created_items.append(ui_task)
 
+        for child in item.children:
+            self._build_item_tree_r(child, checked, level + 1, ui_item)
+
         # ensure the expand indicator is shown/hidden depending on child
         # visibility
         ui_item.update_expand_indicator()
-
-        for child in item.children:
-            self._build_item_tree_r(child, checked, level + 1, ui_item)
 
         # lastly, handle the item level check state.
         # if the item has been marked as checked=False
@@ -212,7 +201,7 @@ class PublishTreeWidget(QtGui.QTreeWidget):
                     # check that items are parented under the right context
                     if str(item.item.context) != str(top_level_item.context):
                         # this object needs moving!
-                        (item, state) = self.__take_item(top_level_item, item_index)
+                        item, state = self.__take_item(top_level_item, item_index)
                         items_to_move.append((item, state))
 
         # now put all the moved items back in the tree.
@@ -503,7 +492,7 @@ class PublishTreeWidget(QtGui.QTreeWidget):
         """
 
         # run default implementation
-        super(PublishTreeWidget, self).dropEvent(event)
+        super().dropEvent(event)
 
         for ui_item, state in self._selected_items_state:
 
@@ -558,7 +547,7 @@ class PublishTreeWidget(QtGui.QTreeWidget):
 
         self._selected_items_state = selected_items_state
 
-        super(PublishTreeWidget, self).dragEnterEvent(event)
+        super().dragEnterEvent(event)
 
     def mouseMoveEvent(self, event):
         """
@@ -568,7 +557,7 @@ class PublishTreeWidget(QtGui.QTreeWidget):
         """
         if self.state() != QtGui.QAbstractItemView.DragSelectingState:
             # bubble up all events that aren't drag select related
-            super(PublishTreeWidget, self).mouseMoveEvent(event)
+            super().mouseMoveEvent(event)
 
 
 def _init_item_r(parent_item):

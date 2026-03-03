@@ -30,7 +30,7 @@ class TreeNodeItem(TreeNodeBase):
         :param parent: The parent QWidget for this control
         """
         self._item = item
-        super(TreeNodeItem, self).__init__(parent)
+        super().__init__(parent)
         self.setFlags(self.flags() | QtCore.Qt.ItemIsSelectable)
 
         # go ahead and keep a handle on these so they can be reused
@@ -65,7 +65,7 @@ class TreeNodeItem(TreeNodeBase):
         """
         # Ensure that the item's check state matches the GUIs.
         self._item.checked = state != QtCore.Qt.Unchecked
-        super(TreeNodeItem, self).set_check_state(state)
+        super().set_check_state(state)
 
     def __repr__(self):
         return "<TreeNodeItem %s>" % str(self)
@@ -73,9 +73,12 @@ class TreeNodeItem(TreeNodeBase):
     def __str__(self):
         return "%s %s" % (self._item.type_display, self._item.name)
 
-    def create_summary(self):
+    def create_summary(self, level=0):
         """
         Creates summary of actions
+
+        :param level: Indentation level of this item lives within the tree.
+        :type level: int
 
         :returns: List of strings
         """
@@ -91,16 +94,23 @@ class TreeNodeItem(TreeNodeBase):
                     task_summaries.extend(child_item.create_summary())
                 else:
                     # sub-items
-                    items_summaries.extend(child_item.create_summary())
+                    items_summaries.extend(child_item.create_summary(level + 1))
 
             summary = []
 
             if len(task_summaries) > 0:
 
-                summary_str = "<b>%s</b><br>" % self.item.name
-                summary_str += "<br>".join(
-                    ["&ndash; %s" % task_summary for task_summary in task_summaries]
+                summary_str = "<ul><li>" * level
+                summary_str += "<b>%s</b>" % self.item.name
+                summary_str += '<ul style="list-style-type:circle;">'
+                summary_str += "".join(
+                    [
+                        "<li><i>%s</i></li>" % task_summary
+                        for task_summary in task_summaries
+                    ]
                 )
+                summary_str += "</ul>"
+                summary_str += "</li></ul>" * level
                 summary.append(summary_str)
 
             summary.extend(items_summaries)
@@ -168,7 +178,7 @@ class TreeNodeItem(TreeNodeBase):
 
         :param bool expand: True if item should be expanded, False otherwise
         """
-        super(TreeNodeItem, self).setExpanded(expand)
+        super().setExpanded(expand)
         self._check_expand_state()
 
     def show_expand_indicator(self, show):
@@ -253,7 +263,7 @@ class TopLevelTreeNodeItem(TreeNodeItem):
         :param item:
         :param parent: The parent QWidget for this control
         """
-        super(TopLevelTreeNodeItem, self).__init__(item, parent)
+        super().__init__(item, parent)
 
         # ensure items that allow context change are draggable
         if self.item.context_change_allowed:
@@ -267,7 +277,7 @@ class TopLevelTreeNodeItem(TreeNodeItem):
         """
         Create the widget that is used to visualise the node
         """
-        widget = super(TopLevelTreeNodeItem, self)._create_widget(parent)
+        widget = super()._create_widget(parent)
 
         # show the proper drag handle
         widget.show_drag_handle(self.item.context_change_allowed)

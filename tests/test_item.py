@@ -14,7 +14,7 @@ import tempfile
 from publish_api_test_base import PublishApiTestBase
 from tank_test.tank_test_base import temp_env_var
 from tank_test.tank_test_base import setUpModule  # noqa
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 import sgtk
 
@@ -366,7 +366,7 @@ class TestPublishItem(PublishApiTestBase):
                 nb_items_processed = 0
                 for item in manager.tree:
                     for task in item.tasks:
-                        (is_valid, error) = yield task
+                        is_valid, error = yield task
                         # The validate method of both plugins will raise an error
                         # if the the values can be retrieved.
                         # We're raising if the test passes in the validate method
@@ -398,7 +398,7 @@ class TestPublishItem(PublishApiTestBase):
 
 class TestQtPixmapAvailability(PublishApiTestBase):
     def setUp(self):
-        super(TestQtPixmapAvailability, self).setUp()
+        super().setUp()
 
         # Make sure we're about to reset a flag that actually exists!
         self.assertTrue(hasattr(self.api.item, "_qt_pixmap_is_usable"))
